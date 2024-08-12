@@ -40,22 +40,48 @@ public class Steam {
 	}
 
 	public JSONObject getGameJSON() {
-		JSONObject aux = body.getJSONObjectFirst();
+		
+		JSONArray array = body.getItems();
+
+		JSONObject aux;
+		
+		int i = getPosition(array);
+		
+		if(i != -1) {
+			
+			aux = array.getJSONObject(i);
+			
+		}else {
+			
+			throw new RuntimeException("El juego no se encontró");		
+		}
+			
+		
+		
 		return aux;
 	}
 
 	private int getPosition(JSONArray array) {
+		int pos = -1;
+		
+		
+		
+		for (int i = 0; i < array.length(); i++){
+			
+			String nombre = array.getJSONObject(i).getString("name").toLowerCase().replaceAll("[;:,.\\*|®_-°]", "");
+			
+			if(nombre.equals(this.gameName.toLowerCase().replaceAll("[;:,.\\*|_-°]®", ""))) { 
+				pos = i;
+			}
+			
+			if (pos == -1 && nombre.contains(this.gameName.toLowerCase().replaceAll("[;:,.\\*|°_-®]", "")))
+				pos = i;
+			} 
 
-		for (int i = 0; i < array.length(); i++)
-			if (array.getJSONObject(i).get("name").equals(this.gameName))
-				return i;
-
-		return -1;
+		return pos;
 	}
-
-	public String getGameString() {
-
-		String aux = "";
+	
+	public JSONArray getGames() {
 
 		JSONArray array = body.getItems();
 
@@ -64,7 +90,28 @@ public class Steam {
 		if (p == -1) {
 			throw new RuntimeException("El juego no se encontró");
 		}
+		
+		return array;
+	}
+	
+	public String getGamesInString() {
 
+		JSONArray array = body.getItems();
+		
+		String aux = "";
+		
+		for(int i = 0; i < array.length(); i++) {
+			
+			aux = devolverJuego(i, array, aux) + "\n";
+			
+		}
+
+		
+		return aux;
+	}
+
+	private String devolverJuego(int p, JSONArray array, String aux) {
+		
 		JSONObject first = array.getJSONObject(p);
 
 		aux += ("Nombre: " + first.get("name") + "\n");
@@ -82,18 +129,36 @@ public class Steam {
 			 
 			 ;
 
-			aux += ("	Precio: " + df.format(price.getDouble("initial") / 100.0) + "\n");
-			aux += ("	Precio ARS: " + df.format((price.getDouble("initial") / 100.0) * precioArg) + "\n");
+			aux += ("Precio: " + df.format(price.getDouble("initial") / 100.0) + "\n");
+			aux += ("Precio ARS: " + df.format((price.getDouble("initial") / 100.0) * precioArg) + "\n");
 
-			if (price.getDouble("final") != price.getDouble("initial") / 100.0) {
-				aux+= "\n";
-				aux += ("	Precio en oferta actual: " + df.format(price.getDouble("final") / 100.0) + "\n");
-				aux += ("	Precio ARS en oferta actual: " + df.format((price.getDouble("final") / 100.0) * precioArg) + "\n");
+			if (price.getDouble("final")/100.0 < price.getDouble("initial") / 100.0) {
+				aux+= "El videojuego esta en oferta!\n";
+				aux += ("Precio en oferta actual: " + df.format(price.getDouble("final") / 100.0) + "\n");
+				aux += ("Precio ARS en oferta actual: " + df.format((price.getDouble("final") / 100.0) * precioArg) + "\n");
 			}
 
 		} else {
 			aux += ("Precio: gratis" + "\n");
 		}
+	
+		return aux;
+	}
+	
+	public String getGameString() {
+
+		String aux = "";
+
+		JSONArray array = body.getItems();
+
+		int p = this.getPosition(array);
+
+		if (p == -1) {
+			throw new RuntimeException("El juego no se encontró");
+		}
+
+		aux = devolverJuego(p,array,aux);
+		
 
 		return aux;
 	}
