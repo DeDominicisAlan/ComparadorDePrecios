@@ -25,13 +25,15 @@ public class Steam {
 
 	private void fetchGameData() {
 		try {
-			HttpResponse<JsonNode> response = Unirest.get(steamApiUrl).asJson();
-			httpResponseValidator = new HttpResponseValidator(response);
+			
+			SteamRequest steamRequest = new SteamRequest(this.steamApiUrl);
+		
+			httpResponseValidator = new HttpResponseValidator(steamRequest.getResponse());
 
 			if (httpResponseValidator.isSuccess()) {
 				body = new JsonResponseParser(httpResponseValidator.getResponse().getBody());
 			} else {
-				throw new RuntimeException("Error en la solicitud HTTP: " + response.getStatus());
+				throw new RuntimeException("Error en la solicitud HTTP: " + steamRequest.getResponse().getStatus());
 			}
 
 		} catch (Exception e) {

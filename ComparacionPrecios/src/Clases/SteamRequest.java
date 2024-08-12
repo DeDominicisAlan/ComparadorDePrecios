@@ -30,4 +30,8 @@ public class SteamRequest {
 	}
 	
 	
+	public HttpResponse<JsonNode> getResponse(){
+		return response;
+	}
+	
 }
