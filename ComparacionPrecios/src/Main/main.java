@@ -33,6 +33,7 @@ public class main {
 		
 		System.out.println(game.getGamesInString());
 		
+		
 	}
 
 }
