@@ -13,7 +13,7 @@ public class PruebaDolar {
 		
 		System.out.println("Precio del dolar: " + dolar.getPrecio());
 		
-		double compra = 5.35;
+		double compra = 600;
 		
 		System.out.println("Precio de una compra de " + compra + ": " + dolar.getCompra(compra)); //5 dolares a peso argentino
 		

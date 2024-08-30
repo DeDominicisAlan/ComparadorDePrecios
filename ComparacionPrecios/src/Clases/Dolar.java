@@ -21,7 +21,7 @@ public class Dolar {
 				
 		if(httpResponseValidator.isSuccess()) {
 			JsonResponseParser body = new JsonResponseParser(httpResponseValidator.getResponse().getBody());
-			precio = (Double) body.getJsonObject().get("venta") * 1.0;
+			precio = (Integer) body.getJsonObject().get("venta") * 1.0;
 			
 		}else {
 			throw new RuntimeException("Error en la solicitud HTTP: " + response.getStatus());
